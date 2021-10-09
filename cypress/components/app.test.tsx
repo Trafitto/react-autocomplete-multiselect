@@ -7,17 +7,23 @@ import AutocompleteMultiselect from "../../src/lib/components";
 
 describe("multiselect", () => {
   const searchFunction = (query: string) =>
-    new Promise<any[]>((resolve, reject) => {
-      const filtered = mock.filter((el) => el.first_name.indexOf(query) > -1);
+    new Promise<any[]>((resolve) => {
+      let filtered = mock;
+      if (query.length) {
+        filtered = mock.filter((el: any) => {
+          console.log(el)
+          return el.first_name.indexOf(query) > -1;
+        });
+      }
       resolve(filtered);
     });
 
   it("should render the select", () => {
-    mount(<AutocompleteMultiselect searchFunction={searchFunction} />);
+    mount(<AutocompleteMultiselect searchFunction={searchFunction}/>);
     cy.get<HTMLInputElement>("input")
-      .invoke("val", "Wenda")
-      .trigger("focus")
+      .type("Wenda")
       .trigger("change");
+
 
     cy.get<HTMLLIElement>("li").contains("Wenda");
   });
